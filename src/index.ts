@@ -1,9 +1,22 @@
 import "dotenv/config";
 import Fastify from "fastify";
+import fjwt from "@fastify/jwt";
 import { PrismaClient } from "@prisma/client";
+import { registerAuthRoutes } from "./routes/auth.js";
 
 const prisma = new PrismaClient();
 const app = Fastify({ logger: true });
+
+const jwtSecret = process.env.JWT_SECRET;
+if (!jwtSecret || jwtSecret.length < 16) {
+  app.log.warn(
+    "JWT_SECRET is missing or short; set a strong secret in production (>= 16 chars).",
+  );
+}
+
+await app.register(fjwt, {
+  secret: jwtSecret ?? "dev-only-change-JWT_SECRET-in-env",
+});
 
 app.get("/health", async () => ({ status: "ok" }));
 
@@ -16,6 +29,8 @@ app.get("/ready", async (_req, reply) => {
     return reply.code(503).send({ status: "not_ready", database: "disconnected" });
   }
 });
+
+await registerAuthRoutes(app, prisma);
 
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || "0.0.0.0";
