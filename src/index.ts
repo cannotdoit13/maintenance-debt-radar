@@ -1,8 +1,11 @@
 import "dotenv/config";
 import Fastify from "fastify";
 import fjwt from "@fastify/jwt";
+import rawBody from "fastify-raw-body";
 import { PrismaClient } from "@prisma/client";
 import { registerAuthRoutes } from "./routes/auth.js";
+import { registerWebhookRoutes } from "./routes/webhooks.js";
+import { startNormalizer } from "./workers/normalizer.js";
 
 const prisma = new PrismaClient();
 const app = Fastify({ logger: true });
@@ -18,6 +21,8 @@ await app.register(fjwt, {
   secret: jwtSecret ?? "dev-only-change-JWT_SECRET-in-env",
 });
 
+await app.register(rawBody, { global: false, runFirst: true });
+
 app.get("/health", async () => ({ status: "ok" }));
 
 app.get("/ready", async (_req, reply) => {
@@ -31,6 +36,7 @@ app.get("/ready", async (_req, reply) => {
 });
 
 await registerAuthRoutes(app, prisma);
+await registerWebhookRoutes(app, prisma);
 
 const port = Number(process.env.PORT) || 3000;
 const host = process.env.HOST || "0.0.0.0";
@@ -43,7 +49,11 @@ try {
   process.exit(1);
 }
 
+const pollMs = Number(process.env.NORMALIZER_POLL_MS) || 5_000;
+const normalizer = startNormalizer(prisma, app.log, pollMs);
+
 const shutdown = async () => {
+  normalizer.stop();
   await app.close();
   await prisma.$disconnect();
   process.exit(0);

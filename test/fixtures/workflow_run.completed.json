@@ -1,0 +1,55 @@
+{
+  "action": "completed",
+  "workflow_run": {
+    "id": 2468283044,
+    "name": "CI",
+    "node_id": "WFR_kwDOExample",
+    "head_branch": "main",
+    "head_sha": "acb5ea3ce5b4c3e98e26c4b4f5c7e2a1d3f0b9a8",
+    "run_number": 42,
+    "event": "push",
+    "status": "completed",
+    "conclusion": "failure",
+    "workflow_id": 161335,
+    "url": "https://api.github.com/repos/octocat/Hello-World/actions/runs/2468283044",
+    "html_url": "https://github.com/octocat/Hello-World/actions/runs/2468283044",
+    "created_at": "2026-04-20T05:00:00Z",
+    "updated_at": "2026-04-20T05:05:30Z",
+    "repository": {
+      "id": 1296269,
+      "full_name": "octocat/Hello-World",
+      "private": false,
+      "html_url": "https://github.com/octocat/Hello-World",
+      "owner": {
+        "login": "octocat",
+        "id": 1
+      }
+    },
+    "head_commit": {
+      "id": "acb5ea3ce5b4c3e98e26c4b4f5c7e2a1d3f0b9a8",
+      "message": "fix: broken test",
+      "author": {
+        "name": "The Octocat",
+        "email": "octocat@github.com"
+      }
+    }
+  },
+  "workflow": {
+    "id": 161335,
+    "name": "CI",
+    "path": ".github/workflows/ci.yml"
+  },
+  "repository": {
+    "id": 1296269,
+    "full_name": "octocat/Hello-World",
+    "private": false,
+    "owner": {
+      "login": "octocat",
+      "id": 1
+    }
+  },
+  "sender": {
+    "login": "octocat",
+    "id": 1
+  }
+}
